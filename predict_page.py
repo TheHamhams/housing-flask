@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import numpy as np
+import pandas as pd
 
 import datetime
 
@@ -236,17 +237,23 @@ def show_predict_page():
    
    LotArea = st.number_input('How many square feet is the lot size?', 0, 250000)
    
+   Street_Pave = st.checkbox('Does the house have paved access?')
+   binary(Street_Pave)
+   
    Alley = st.checkbox('Is there paved alley access to the property?')
    binary(Alley)
    
    LotShape = st.checkbox('Does the property have a regular shape?')
    binary(LotShape)
    
+   LandContour_Flat = st.checkbox('IS the property near flat or level?')
+   binary(LandContour_Flat)
+   
    LotConfig = st.selectbox('What is the lot configuration?', lot_configs)
    LotConfig = LotConfig.split()[0]
    
-   LandSlope = st.checkbox('Does the property only have a gentle slope?')
-   binary(LandSlope)
+   LandSlope_Gentle = st.checkbox('Does the property only have a gentle slope?')
+   binary(LandSlope_Gentle)
    
    Neighborhood = st.selectbox('What neighborhood is the property located in?', neighborhoods)
    Neighborhood = Neighborhood.split()[0]
@@ -337,7 +344,7 @@ def show_predict_page():
    
    HalfBath = st.slider('How many half bathrooms above grade are present?', 0, 2)
    
-   Bedroom = st.slider('How many bedrooms above grade are present?', 0, 8)
+   BedroomAbvGr = st.slider('How many bedrooms above grade are present?', 0, 8)
    
    KitchenAbvGr = st.slider('How many kitches above grade are present?', 0, 3)
    
@@ -347,7 +354,7 @@ def show_predict_page():
    
    Fireplaces = st.slider('How many fireplaces are present?', 0, 3)
    
-   FireplaceQual = st.selectbox('What is the quality of the fireplaces?', fp_ex_po).split()[0]
+   FireplaceQu = st.selectbox('What is the quality of the fireplaces?', fp_ex_po).split()[0]
    
    GarageType = st.selectbox('Garage location', garage_types).split()[0]
    
@@ -393,4 +400,22 @@ def show_predict_page():
    
    # Create prediction DataFrame
    
-   df_dict = {''}
+   df_dict = {'MSSubClass': MSSubClass, 'MSZoning': MSZoning, 'LotFrontage': LotFrontage, 'LotArea': LotArea, 'Street_Pave': Street_Pave,
+              'Alley': Alley, 'LotShape': LotShape, 'LandContour_Flat': LandContour_Flat, 'LotConfig': LotConfig, 'LandSlope_Gentle': LandSlope_Gentle,
+              'Neighborhood': Neighborhood, 'Condition1': Condition1, 'Condition2': Condition2, 'BldgType': BldgType, 'HouseStyle': HouseStyle,
+              'OverallQual': OverallQual, 'OverallCond': OverallCond, 'Year_Old': Year_Old, 'Remod_Age': Remod_Age, 'Gable_Roof': Gable_Roof,
+              'Comp_Roof': Comp_Roof, 'Exterior1st': Exterior1st, 'Exterior2nd': Exterior2nd, 'MasVnrType': MasVnrType, 'MasVnrArea': MasVnrArea,
+              'ExterQual': ExterQual, 'ExterCond': ExterCond, 'Foundation': Foundation, 'BsmtQual': BsmtQual, 'BsmtCond': BsmtCond,
+              'BsmtExposure': BsmtExposure, 'BsmtFinType1': BsmtFinType1, 'BsmtFinSF1': BsmtFinSF1, 'BsmtFinType2': BsmtFinType2,
+              'BsmtFinSF2': BsmtFinSF2, 'BsmtUnfSF': BsmtUnfSF, 'TotalBsmtSf': TotalBsmtSF, 'Gas': Gas, 'HeatingQC': HeatingQC, 'CentralAir': CentralAir, 
+              '2ndFlrSF': SecondFlrSF, 'Electrical': Electrical, 'LowQualFinSF': LowQualFinSF, 'GrLivArea': GrLivArea, 'BsmtFullBath': BsmtFullBath,
+              'BsmtHalfBath': BsmtHalfBath, 'FullBath': FullBath, 'HalfBath': HalfBath, 'BedroomAbvGr': BedroomAbvGr, 'KitchenAbvGr': KitchenAbvGr,
+              'KitchenQual': KitchenQual, 'Functional': Functional, 'Fireplaces': Fireplaces, 'FireplaceQu': FireplaceQu, 'GarageType': GarageType,
+              'GarageFinish': GarageFinish, 'GarageCars': GarageCars, 'GarageQual': GarageQual, 'GarageCond': GarageCond, 'PavedDrive': PavedDrive,
+              'WoodDeckSF': WoodDeckSF, 'OpenPorchSF': OpenPorchSF, 'EnclosedPorch': EnclosedPorch, '3SsnPorch': ThreeSsnPorch,
+              'ScreenPorch': ScreenPorch, 'PoolArea': PoolArea, 'PoolQC': PoolQC, 'Fence': Fence, 'MiscFeature': MiscFeature, 'MiscVal': MiscVal,
+              'MoSold': MoSold, 'SaleAge': SaleAge, 'SaleType': SaleType, 'SaleCondition': SaleCondition}
+   
+   df = pd.DataFrame([df_dict])
+   
+   
