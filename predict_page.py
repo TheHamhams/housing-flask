@@ -1,27 +1,31 @@
-import streamlit as st
 import pickle
-import numpy as np
+import streamlit as st
 import pandas as pd
-
+import joblib
 import datetime
+
+from sklearn.preprocessing import OneHotEncoder
 
 date = datetime.date.today()
 year = int(date.strftime("%Y"))
 
 def load_model():
-    with open('model.pickle', 'rb') as file:
-        data = pickle.load(file)
-    return data
+   with open('model.pickle', 'rb') as file:
+      data = pickle.load(file)
+   return data
 
-#data = load_model()
+data = load_model()
 
-#model = data['model']
+model = data['model']
+
+
 
 def binary(variable):
-    if variable == True:
+   if variable == True:
         variable = 1
-    else:
+   else:
         variable = 0
+   return variable
 
 
 def show_predict_page():
@@ -132,54 +136,54 @@ def show_predict_page():
       'None -	None',
       'Stone -	Stone')
    
-   ex_po = ('Ex -	Excellent',
-      'Gd -	Good',
-      'TA -	Average/Typical',
-      'Fa -	Fair',
-      'Po -	Poor',
-      'NA')
+   ex_po = ('5 -	Excellent',
+      '4 -	Good',
+      '3 -	Average/Typical',
+      '2 -	Fair',
+      '1 -	Poor',
+      '0 - NA')
    
-   height_ex_po = ('Ex -	Excellent (100+ incehs)',
-      'Gd -	Good (90-99 inches)',
-      'TA -	Average/Typical (80-89 inches)',
-      'Fa -	Fair (70-79 incehs)',
-      'Po -	Poor (<70 inches)',
-      'NA')
+   height_ex_po = ('5 -	Excellent (100+ incehs)',
+      '4 -	Good (90-99 inches)',
+      '3 -	Average/Typical (80-89 inches)',
+      '2 -	Fair (70-79 incehs)',
+      '1 -	Poor (<70 inches)',
+      '0 - NA')
    
    foundations = ('BrkTil -	Brick & Tile',
       'CBlock -	Cinder Block',
       'PConc -	Poured Contrete',	
       'Other - Other')
    
-   exposures = ('Gd -	Good Exposure',
-       'Av -	Average Exposure (split levels or foyers typically score average or above)',	
-       'Mn -	Mimimum Exposure',
-       'No -	No Exposure',
-       'NA -	No Basement')
+   exposures = ('4 -	Good Exposure',
+       '3 -	Average Exposure (split levels or foyers typically score average or above)',	
+       '2 -	Mimimum Exposure',
+       '1 -	No Exposure',
+       '0 -	No Basement')
    
-   finish_types = ('GLQ -	Good Living Quarters',
-       'ALQ -	Average Living Quarters',
-       'BLQ -	Below Average Living Quarters',
-       'Rec -	Average Rec Room',
-       'LwQ -	Low Quality',
-       'Unf -	Unfinshed',
-       'NA -	No Basement')
+   finish_types = ('6 -	Good Living Quarters',
+       '5 -	Average Living Quarters',
+       '4 -	Below Average Living Quarters',
+       '3 -	Average Rec Room',
+       '2 -	Low Quality',
+       '1 -	Unfinshed',
+       '0 -	No Basement')
 
-   functionalities = ('Typ -	Typical Functionality',
-       'Min1 -	Minor Deductions 1',
-       'Min2 -	Minor Deductions 2',
-       'Mod -	Moderate Deductions',
-       'Maj1 -	Major Deductions 1',
-       'Maj2 -	Major Deductions 2',
-       'Sev -	Severely Damaged',
-       'Sal -	Salvage only')
+   functionalities = ('7 -	Typical Functionality',
+       '6 -	Minor Deductions 1',
+       '5 -	Minor Deductions 2',
+       '4 -	Moderate Deductions',
+       '3 -	Major Deductions 1',
+       '2 -	Major Deductions 2',
+       '1 -	Severely Damaged',
+       '0 -	Salvage only')
    
-   fp_ex_po = ('Ex -	Excellent - Exceptional Masonry Fireplace',
-       'Gd -	Good - Masonry Fireplace in main level',
-       'TA -	Average - Prefabricated Fireplace in main living area or Masonry Fireplace in basement',
-       'Fa -	Fair - Prefabricated Fireplace in basement',
-       'Po -	Poor - Ben Franklin Stove',
-       'NA -	No Fireplace')
+   fp_ex_po = ('5 -	Excellent - Exceptional Masonry Fireplace',
+       '4 -	Good - Masonry Fireplace in main level',
+       '3 -	Average - Prefabricated Fireplace in main living area or Masonry Fireplace in basement',
+       '2 -	Fair - Prefabricated Fireplace in basement',
+       '1 -	Poor - Ben Franklin Stove',
+       '0 -	No Fireplace')
    
    garage_types = ('Attchd -	Attached to home',
        'BuiltIn -	Built-In (Garage part of house - typically has room above garage)',
@@ -196,11 +200,11 @@ def show_predict_page():
        '1 -	Partial Pavement',
        '0 -	Dirt/Gravel')
    
-   fences = ('GdPrv -	Good Privacy',
-       'MnPrv -	Minimum Privacy',
-       'GdWo -	Good Wood',
-       'MnWw -	Minimum Wood/Wire',
-       'NA -	No Fence')
+   fences = ('4 -	Good Privacy',
+       '3 -	Minimum Privacy',
+       '2 -	Good Wood',
+       '1 -	Minimum Wood/Wire',
+       '0 -	No Fence')
    
    months = ('1 - January', 
              '2 - February',
@@ -231,29 +235,29 @@ def show_predict_page():
    MSSubClass = int(MSSubClass.split()[0])
    
    MSZoning = st.checkbox('Is the dwelling zoning "RL: Residential Low Density"?')
-   binary(MSZoning)
+   
    
    LotFrontage = st.slider('How many feet of street is connected to the property?', 0, 500, 60)
    
    LotArea = st.number_input('How many square feet is the lot size?', 0, 250000)
    
    Street_Pave = st.checkbox('Does the house have paved access?')
-   binary(Street_Pave)
+   
    
    Alley = st.checkbox('Is there paved alley access to the property?')
-   binary(Alley)
+   
    
    LotShape = st.checkbox('Does the property have a regular shape?')
-   binary(LotShape)
+   
    
    LandContour_Flat = st.checkbox('IS the property near flat or level?')
-   binary(LandContour_Flat)
+   
    
    LotConfig = st.selectbox('What is the lot configuration?', lot_configs)
    LotConfig = LotConfig.split()[0]
    
    LandSlope_Gentle = st.checkbox('Does the property only have a gentle slope?')
-   binary(LandSlope_Gentle)
+   
    
    Neighborhood = st.selectbox('What neighborhood is the property located in?', neighborhoods)
    Neighborhood = Neighborhood.split()[0]
@@ -262,30 +266,27 @@ def show_predict_page():
    Condition1 = Condition1.split()[0]
    
    Condition2 = st.checkbox('Does the property proximity to more than one of the above features?')
-   if Condition2 == True:
-      Condition2 = 0
-   else:
-      Condition2 = 1
+   
    
    BldgType = st.selectbox('What is the type of dwelling?', building_types).split()[0]
    
    HouseStyle = st.selectbox('What is the style of the dwelling?', building_styles).split()[0]
    
-   OverallQual = st.selectbox('What is the quality of th overall material and finish of the dwelling?', ratings).split()[0]
+   OverallQual = int(st.selectbox('What is the quality of th overall material and finish of the dwelling?', ratings).split()[0])
    
-   OverallCond = st.selectbox('What is the overall condition of the dwelling?', ratings).split()[0]
+   OverallCond = int(st.selectbox('What is the overall condition of the dwelling?', ratings).split()[0])
    
    age = st.number_input('What year was the house built?')
-   Year_Old = year - age    
+       
    
    remod = st.number_input('Remodel date (same as construction date if no remodeling or additions)')
-   Remod_Age = year - remod   
+      
    
    Gable_Roof = st.checkbox('Does the house have a gable roof?')
-   binary(Gable_Roof)
+   
    
    Comp_Roof = st.checkbox('Is the roof material Standard (Composite) Shingle?')
-   binary(Comp_Roof)
+   
    
    Exterior1st = st.selectbox('Exterior covering on house', ext1).split()[0]
    
@@ -295,23 +296,23 @@ def show_predict_page():
    
    MasVnrArea = st.number_input('Masonry veneer area in square feet')
    
-   ExterQual = st.selectbox('Quality of materials on the exterior', ex_po).split()[0]
+   ExterQual = int(st.selectbox('Quality of materials on the exterior', ex_po).split()[0])
    
-   ExterCond = st.selectbox('Present condition of the material on the exterior', ex_po).split()[0]
+   ExterCond = int(st.selectbox('Present condition of the material on the exterior', ex_po).split()[0])
    
    Foundation = st.selectbox('Type of foundation', foundations).split()[0]
    
-   BsmtQual = st.selectbox('Evaluate the height of the basement', height_ex_po).split()[0]
+   BsmtQual = int(st.selectbox('Evaluate the height of the basement', height_ex_po).split()[0])
    
-   BsmtCond = st.selectbox('What is the general condition of the basement?', ex_po).split()[0]
+   BsmtCond = int(st.selectbox('What is the general condition of the basement?', ex_po).split()[0])
    
    BsmtExposure = st.selectbox('Refers to walkout or garden level walls', exposures).split()[0]
    
-   BsmtFinType1 = st.selectbox('Rating of basement finished area', finish_types).split()[0]
+   BsmtFinType1 = int(st.selectbox('Rating of basement finished area', finish_types).split()[0])
    
    BsmtFinSF1 = st.number_input('Finished area square feet')
    
-   BsmtFinType2 = st.selectbox('Rating of basement finished area (if multiple types)', finish_types).strip()[0]
+   BsmtFinType2 = int(st.selectbox('Rating of basement finished area (if multiple types)', finish_types).strip()[0])
    
    BsmtFinSF2 = st.number_input('Finished area of second finished area square feet')
    
@@ -320,17 +321,17 @@ def show_predict_page():
    TotalBsmtSF = st.number_input('Total square feet of basement area')
    
    Gas = st.checkbox('Does the house have gas heating?')
-   binary(Gas)
    
-   HeatingQC = st.selectbox('Heating quality and condition', ex_po).split()[0]
+   
+   HeatingQC = int(st.selectbox('Heating quality and condition', ex_po).split()[0])
    
    CentralAir = st.checkbox('Does the house have central air conditioning?')
-   binary(CentralAir)
+   
    
    SecondFlrSF = st.number_input('What is the square feet of the second floor?')
    
    Electrical = st.checkbox('Does the electrical system use standard circut breakers and Romex?')
-   binary(Electrical)
+   
    
    LowQualFinSF = st.number_input('How much of the square feet of the house includes low quality finishing?')
    
@@ -348,13 +349,13 @@ def show_predict_page():
    
    KitchenAbvGr = st.slider('How many kitches above grade are present?', 0, 3)
    
-   KitchenQual = st.selectbox('What is the quality of the kitchen?', ex_po).split()[0]
+   KitchenQual = int(st.selectbox('What is the quality of the kitchen?', ex_po).split()[0])
    
-   Functional = st.selectbox('Home functionality (Assume typical unless deductions are warranted)', functionalities).split()[0]
+   Functional = int(st.selectbox('Home functionality (Assume typical unless deductions are warranted)', functionalities).split()[0])
    
    Fireplaces = st.slider('How many fireplaces are present?', 0, 3)
    
-   FireplaceQu = st.selectbox('What is the quality of the fireplaces?', fp_ex_po).split()[0]
+   FireplaceQu = int(st.selectbox('What is the quality of the fireplaces?', fp_ex_po).split()[0])
    
    GarageType = st.selectbox('Garage location', garage_types).split()[0]
    
@@ -362,9 +363,9 @@ def show_predict_page():
    
    GarageCars = st.slider('Garage car capacity', 0, 4)
    
-   GarageQual = st.selectbox('Garage quality', ex_po).split()[0]
+   GarageQual = int(st.selectbox('Garage quality', ex_po).split()[0])
    
-   GarageCond = st.selectbox('Garage condition', ex_po).split()[0]
+   GarageCond = int(st.selectbox('Garage condition', ex_po).split()[0])
    
    PavedDrive = int(st.selectbox('How paved is the driveway?', driveways).split()[0])
    
@@ -380,27 +381,62 @@ def show_predict_page():
    
    PoolArea = st.number_input('How many square feet of pool area are present?')
    
-   PoolQC = st.selectbox('What is the quality of the pool?', ex_po).split()[0]
+   PoolQC = int(st.selectbox('What is the quality of the pool?', ex_po).split()[0])
    
-   Fence = st.selectbox('What is the quality of the fence?', fences).split()[0]
+   Fence = int(st.selectbox('What is the quality of the fence?', fences).split()[0])
    
    MiscFeature = st.checkbox('Does the house include a feature not covered? (Elevator, 2nd Garage, Shed, etc.)')
-   binary(MiscFeature)
+   
    
    MiscVal = st.number_input('What is the value of the above feature?')
    
    MoSold = int(st.selectbox('What month was the property sold?', months).split()[0])
    
    sage = st.number_input('What year was the property sold?')
-   SaleAge = year - sage
+   
    
    SaleType = st.selectbox('What was the type of sale?', sales).split()[0]
    
    SaleCondition = st.selectbox('What was the sale condition?', sale_conditions).split()[0]
    
-   # Create prediction DataFrame
    
-   df_dict = {'MSSubClass': MSSubClass, 'MSZoning': MSZoning, 'LotFrontage': LotFrontage, 'LotArea': LotArea, 'Street_Pave': Street_Pave,
+   
+   
+   
+   #model = joblib.load('rf_model')
+   
+   def predicter():
+      m = model.predict(df)
+      return m 
+   
+   predict_button = st.button('Predict House Price')
+   
+   if predict_button:
+      #result = predicter()
+      #st.success(f'Predicted house price is {round(result, 2)}')
+      MSZoning = binary(MSZoning)
+      Street_Pave = binary(Street_Pave)
+      Alley = binary(Alley)
+      LotShape = binary(LotShape)
+      LandContour_Flat = binary(LandContour_Flat)
+      LandSlope_Gentle = binary(LandSlope_Gentle)
+      if Condition2 == True:
+         Condition2 = 0
+      else:
+         Condition2 = 1
+      Year_Old = year - age
+      Remod_Age = year - remod
+      Gable_Roof = binary(Gable_Roof)
+      Comp_Roof = binary(Comp_Roof)
+      Gas = binary(Gas)
+      CentralAir = binary(CentralAir)
+      Electrical = binary(Electrical)
+      MiscFeature = binary(MiscFeature)
+      SaleAge = year - sage
+      
+      # Create prediction DataFrame
+   
+      df_dict = {'MSSubClass': MSSubClass, 'MSZoning': MSZoning, 'LotFrontage': LotFrontage, 'LotArea': LotArea, 'Street_Pave': Street_Pave,
               'Alley': Alley, 'LotShape': LotShape, 'LandContour_Flat': LandContour_Flat, 'LotConfig': LotConfig, 'LandSlope_Gentle': LandSlope_Gentle,
               'Neighborhood': Neighborhood, 'Condition1': Condition1, 'Condition2': Condition2, 'BldgType': BldgType, 'HouseStyle': HouseStyle,
               'OverallQual': OverallQual, 'OverallCond': OverallCond, 'Year_Old': Year_Old, 'Remod_Age': Remod_Age, 'Gable_Roof': Gable_Roof,
@@ -416,6 +452,22 @@ def show_predict_page():
               'ScreenPorch': ScreenPorch, 'PoolArea': PoolArea, 'PoolQC': PoolQC, 'Fence': Fence, 'MiscFeature': MiscFeature, 'MiscVal': MiscVal,
               'MoSold': MoSold, 'SaleAge': SaleAge, 'SaleType': SaleType, 'SaleCondition': SaleCondition}
    
-   df = pd.DataFrame([df_dict])
-   
-   
+      
+      df = pd.DataFrame([df_dict])
+
+      ohe_columns = ['Neighborhood', 'Condition1', 'BldgType', 'HouseStyle', 'MSSubClass', 'Exterior1st', 'Exterior2nd', 
+               'MasVnrType', 'Foundation', 'GarageType', 'GarageFinish', 'SaleType', 'LotConfig', 'SaleCondition']
+
+      df_ohe = df[ohe_columns]
+
+      enc = OneHotEncoder(handle_unknown='ignore')
+
+      temp = pd.DataFrame(enc.fit_transform(df_ohe))
+
+      df.drop(ohe_columns, inplace=True, axis=1)
+      df.join(temp.head())
+      
+      #result = predicter()
+      #st.success(f'Predicted house price is {round(result, 2)}')
+      st.subheader(f'{len(df.columns)} {model.columns}')
+      df.to_csv('text.csv', index=False)
