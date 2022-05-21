@@ -29,7 +29,9 @@ def binary(variable):
 def show_predict_page():
    st.title('Housing Price Prediction')
    
-   
+   st.write("""
+            This data is from the Kaggle [Housing Competition](https://www.kaggle.com/competitions/home-data-for-ml-course/overview). Answer the following questions to create a housing price prediction.
+            """)
    # Selection Options
    dwellings = ('20 -> 1-STORY 1946 & NEWER ALL STYLES',
                   '30 -> 1-STORY 1945 & OLDER',
@@ -432,4 +434,4 @@ def show_predict_page():
       
       st.success(f'Predicted house price is {result[0]}')
       
-      df.to_csv('text.csv', index=False)
+      #df.to_csv('text.csv', index=False)
